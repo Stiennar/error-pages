@@ -1,0 +1,9 @@
+# Pages d'erreur générées (contiennent l'image base64 encodée)
+# Ces fichiers sont générés par apply.sh à partir des templates
+error*.html
+
+# Fichiers de config nginx récupérés par pull.sh
+# Ces fichiers sont versionnés intentionnellement SAUF s'ils sont
+# des copies backup — les versions "source" sont nginx-*.conf
+# (décommentez si vous ne voulez pas les versionner)
+# nginx-*.conf

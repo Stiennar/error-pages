@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accès Refusé - Erreur 403</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #121212;
+            color: #DFDFDF;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100svh;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            padding: 1em;
+            gap: clamp(0.4em, 1svh, 0.8em);
+
+        h1 {
+            flex: 0;
+            font-size: clamp(1.6em, 10svh, 4em);
+        }
+
+        p {
+            flex: 0;
+            font-size: 0.8em;
+            text-align: center;
+        }
+
+        img {
+            flex-shrink: 1;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            min-height: 0;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0.95) 80%, rgba(0,0,0,0) 100%);
+            filter: drop-shadow(0.2em 0 1em rgba(0, 0, 0, 0.8));
+        }
+    </style>
+</head>
+<body>
+    <h1>Haille !</h1>
+    <img src="data:image/webp;base64,{BASE64_IMAGE}" alt="Erreur 403">
+    <span>
+    <p>Erreur 403 - Accès Refusé</p>
+</body>
+</html>
