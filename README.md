@@ -9,14 +9,8 @@ Codes supportés : **401, 403, 404, 408, 429, 500, 502, 503**
 ```
 .
 ├── templates/           ← Sources HTML (à éditer)
-│   ├── 401.html         Authentification requise
-│   ├── 403.html         Accès refusé (avec image)
-│   ├── 404.html         Page non trouvée
-│   ├── 408.html         Délai expiré
-│   ├── 429.html         Trop de requêtes
-│   ├── 500.html         Erreur serveur
-│   ├── 502.html         Mauvaise passerelle
-│   └── 503.html         Service indisponible
+│   ├── error.html       Template générique (401, 404, 408, 429, 500, 502, 503)
+│   └── 403.html         Accès refusé (avec image)
 ├── nginx/               ← Configs nginx (versionnées)
 │   ├── http.conf        error_page globaux
 │   ├── server-proxy.conf  proxy_intercept_errors + locations
@@ -33,7 +27,7 @@ Codes supportés : **401, 403, 404, 408, 429, 500, 502, 503**
 ```bash
 bash apply.sh
 ```
-→ Génère les 8 pages d'erreur depuis `templates/` + image  
+→ Génère les 8 pages d'erreur depuis `templates/error.html` (+ `403.html` avec image)  
 → Déploie les configs `nginx/`  
 → Recharge nginx
 
@@ -52,9 +46,9 @@ bash apply.sh
 ## 🎨 Personnalisation
 
 ### Éditer le texte ou le design
-Modifier les fichiers dans `templates/` :
-- Titre : `<h1>...</h1>`
-- Texte : `<p>...</p>`
+Modifier `templates/error.html` (pages génériques) ou `templates/403.html` (page spéciale) :
+- Code affiché : `<h1>{CODE}</h1>`
+- Message : `<p>Erreur {CODE} - {MESSAGE}</p>` — les textes sont dans `apply.sh` (dict `ERROR_PAGES`)
 - Style : bloc `<style>`
 
 Puis redéployer :

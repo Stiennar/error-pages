@@ -24,6 +24,7 @@
             overflow: hidden;
             padding: 1em;
             gap: clamp(0.4em, 1svh, 0.8em);
+        }
 
         h1 {
             flex: 0;
@@ -42,6 +43,8 @@
             max-height: 100%;
             object-fit: contain;
             min-height: 0;
+            pointer-events: none;
+            user-select: none;
             mask-image: linear-gradient(to bottom, rgba(0,0,0,0.95) 80%, rgba(0,0,0,0) 100%);
             filter: drop-shadow(0.2em 0 1em rgba(0, 0, 0, 0.8));
         }
@@ -49,8 +52,7 @@
 </head>
 <body>
   <h1>Haille !</h1>
-  <img src="data:image/webp;base64,{BASE64_IMAGE}" alt="Erreur 403">
-  <span>
+  <img src="data:image/webp;base64,{BASE64_IMAGE}" alt="">
   <p>Erreur 403 - Accès Refusé</p>
 </body>
 </html>
