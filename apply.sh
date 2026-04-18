@@ -10,41 +10,48 @@ fi
 
 echo "🔄 Génération et déploiement des pages d'erreur..."
 
-# Codes d'erreur à déployer
-ERROR_CODES=(401 403 404 408 429 500 502 503)
+# Codes d'erreur → [CODE]="Titre|Message"
+declare -A ERROR_PAGES=(
+    [401]="Non Authentifié - Erreur 401|Erreur 401 - Authentification Requise"
+    [404]="Page Non Trouvée - Erreur 404|Erreur 404 - Page Non Trouvée"
+    [408]="Délai Expiré - Erreur 408|Erreur 408 - Délai Expiré"
+    [429]="Trop de Requêtes - Erreur 429|Erreur 429 - Trop de Requêtes"
+    [500]="Erreur Serveur - Erreur 500|Erreur 500 - Erreur Serveur"
+    [502]="Mauvaise Passerelle - Erreur 502|Erreur 502 - Mauvaise Passerelle"
+    [503]="Service Indisponible - Erreur 503|Erreur 503 - Service Indisponible"
+)
 
-for ERROR_CODE in "${ERROR_CODES[@]}"; do
-    TEMPLATE="templates/${ERROR_CODE}.html"
-    
-    # Vérifier que le template existe
-    if [ ! -f "$TEMPLATE" ]; then
-        echo "⚠️  Template manquant: $TEMPLATE (skipped)"
-        continue
-    fi
-    
-    # Générer et envoyer
+# Pages génériques depuis template/error.html
+for ERROR_CODE in "${!ERROR_PAGES[@]}"; do
+    TITLE="${ERROR_PAGES[$ERROR_CODE]%%|*}"
+    MESSAGE="${ERROR_PAGES[$ERROR_CODE]##*|}"
+
     python3 << PYTHON | docker exec -i nginx-proxy-manager bash -c "cat > /var/www/html/error${ERROR_CODE}.html" || { echo "❌ Erreur lors du déploiement de error${ERROR_CODE}.html"; exit 1; }
-import base64
-
-# Read template
-with open('templates/$ERROR_CODE.html', 'r') as f:
+with open('templates/error.html', 'r') as f:
     template = f.read()
 
-# Replace image placeholder only for 403
-if '$ERROR_CODE' == '403':
-    with open('image.webp', 'rb') as f:
-        image_data = f.read()
-    b64_image = base64.b64encode(image_data).decode('utf-8')
-    html_content = template.replace('{BASE64_IMAGE}', b64_image)
-else:
-    html_content = template
-
-# Output to stdout (will be piped to docker)
+html_content = template.replace('{TITLE}', '$TITLE').replace('{CODE}', '$ERROR_CODE').replace('{MESSAGE}', '$MESSAGE')
 print(html_content)
 PYTHON
-    
+
     echo "  ✅ error${ERROR_CODE}.html généré et déployé"
 done
+
+# Page 403 spéciale (avec image)
+python3 << PYTHON | docker exec -i nginx-proxy-manager bash -c "cat > /var/www/html/error403.html" || { echo "❌ Erreur lors du déploiement de error403.html"; exit 1; }
+import base64
+
+with open('templates/403.html', 'r') as f:
+    template = f.read()
+
+with open('image.webp', 'rb') as f:
+    image_data = f.read()
+
+b64_image = base64.b64encode(image_data).decode('utf-8')
+html_content = template.replace('{BASE64_IMAGE}', b64_image)
+print(html_content)
+PYTHON
+echo "  ✅ error403.html généré et déployé"
 
 # Déployer les configs nginx
 echo "🔧 Déploiement de la configuration nginx..."
