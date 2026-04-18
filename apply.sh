@@ -23,7 +23,7 @@ for ERROR_CODE in "${ERROR_CODES[@]}"; do
     fi
     
     # Générer et envoyer
-    python3 << PYTHON | docker exec -i nginx-proxy-manager bash -c "cat > /var/www/html/error${ERROR_CODE}.html"
+    python3 << PYTHON | docker exec -i nginx-proxy-manager bash -c "cat > /var/www/html/error${ERROR_CODE}.html" || { echo "❌ Erreur lors du déploiement de error${ERROR_CODE}.html"; exit 1; }
 import base64
 
 # Read template
@@ -49,13 +49,13 @@ done
 # Déployer les configs nginx
 echo "🔧 Déploiement de la configuration nginx..."
 
-docker cp nginx-http.conf nginx-proxy-manager:/data/nginx/custom/http.conf
+docker cp nginx-http.conf nginx-proxy-manager:/data/nginx/custom/http.conf || { echo "❌ Erreur nginx-http.conf"; exit 1; }
 echo "  ✅ nginx-http.conf déployé"
 
-docker cp nginx-server-proxy.conf nginx-proxy-manager:/data/nginx/custom/server_proxy.conf
+docker cp nginx-server-proxy.conf nginx-proxy-manager:/data/nginx/custom/server_proxy.conf || { echo "❌ Erreur nginx-server-proxy.conf"; exit 1; }
 echo "  ✅ nginx-server-proxy.conf déployé"
 
-docker cp nginx-default-site.conf nginx-proxy-manager:/data/nginx/default_host/site.conf
+docker cp nginx-default-site.conf nginx-proxy-manager:/data/nginx/default_host/site.conf || { echo "❌ Erreur nginx-default-site.conf"; exit 1; }
 echo "  ✅ nginx-default-site.conf déployé"
 
 # Reload nginx
