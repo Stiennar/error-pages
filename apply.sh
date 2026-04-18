@@ -14,7 +14,7 @@ echo "🔄 Génération et déploiement des pages d'erreur..."
 ERROR_CODES=(401 403 404 408 429 500 502 503)
 
 for ERROR_CODE in "${ERROR_CODES[@]}"; do
-    TEMPLATE="template-${ERROR_CODE}.html"
+    TEMPLATE="templates/${ERROR_CODE}.html"
     
     # Vérifier que le template existe
     if [ ! -f "$TEMPLATE" ]; then
@@ -27,7 +27,7 @@ for ERROR_CODE in "${ERROR_CODES[@]}"; do
 import base64
 
 # Read template
-with open('$TEMPLATE', 'r') as f:
+with open('templates/$ERROR_CODE.html', 'r') as f:
     template = f.read()
 
 # Replace image placeholder only for 403
@@ -49,14 +49,14 @@ done
 # Déployer les configs nginx
 echo "🔧 Déploiement de la configuration nginx..."
 
-docker cp nginx-http.conf nginx-proxy-manager:/data/nginx/custom/http.conf || { echo "❌ Erreur nginx-http.conf"; exit 1; }
-echo "  ✅ nginx-http.conf déployé"
+docker cp nginx/http.conf nginx-proxy-manager:/data/nginx/custom/http.conf || { echo "❌ Erreur nginx/http.conf"; exit 1; }
+echo "  ✅ nginx/http.conf déployé"
 
-docker cp nginx-server-proxy.conf nginx-proxy-manager:/data/nginx/custom/server_proxy.conf || { echo "❌ Erreur nginx-server-proxy.conf"; exit 1; }
-echo "  ✅ nginx-server-proxy.conf déployé"
+docker cp nginx/server-proxy.conf nginx-proxy-manager:/data/nginx/custom/server_proxy.conf || { echo "❌ Erreur nginx/server-proxy.conf"; exit 1; }
+echo "  ✅ nginx/server-proxy.conf déployé"
 
-docker cp nginx-default-site.conf nginx-proxy-manager:/data/nginx/default_host/site.conf || { echo "❌ Erreur nginx-default-site.conf"; exit 1; }
-echo "  ✅ nginx-default-site.conf déployé"
+docker cp nginx/default-site.conf nginx-proxy-manager:/data/nginx/default_host/site.conf || { echo "❌ Erreur nginx/default-site.conf"; exit 1; }
+echo "  ✅ nginx/default-site.conf déployé"
 
 # Reload nginx
 docker exec nginx-proxy-manager nginx -s reload
