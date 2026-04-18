@@ -24,6 +24,8 @@
             overflow: hidden;
             padding: 1em;
             gap: clamp(0.4em, 1svh, 0.8em);
+            opacity: 0;
+            transition: opacity 0.15s ease;
         }
 
         h1 {
@@ -54,5 +56,6 @@
   <h1>Haille !</h1>
   <img src="data:image/webp;base64,{BASE64_IMAGE}" alt="">
   <p>Erreur 403 - Accès Refusé</p>
+  <script>window.onload = () => document.body.style.opacity = 1;</script>
 </body>
 </html>
