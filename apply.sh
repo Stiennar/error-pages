@@ -55,6 +55,20 @@ echo "  ✅ nginx/http.conf déployé"
 docker cp nginx/server-proxy.conf nginx-proxy-manager:/data/nginx/custom/server_proxy.conf || { echo "❌ Erreur nginx/server-proxy.conf"; exit 1; }
 echo "  ✅ nginx/server-proxy.conf déployé"
 
+# Générer le certificat auto-signé pour le default SSL si nécessaire
+docker exec nginx-proxy-manager bash -c "
+  if [ ! -f /data/nginx/ssl-default/default.crt ]; then
+    mkdir -p /data/nginx/ssl-default
+    openssl req -x509 -nodes -newkey rsa:2048 -days 3650 \
+      -keyout /data/nginx/ssl-default/default.key \
+      -out /data/nginx/ssl-default/default.crt \
+      -subj '/CN=default' 2>/dev/null
+    echo 'créé'
+  else
+    echo 'existe'
+  fi
+" | grep -q créé && echo "  ✅ Certificat SSL auto-signé généré" || echo "  ✅ Certificat SSL auto-signé déjà présent"
+
 docker cp nginx/default-site.conf nginx-proxy-manager:/data/nginx/default_host/site.conf || { echo "❌ Erreur nginx/default-site.conf"; exit 1; }
 echo "  ✅ nginx/default-site.conf déployé"
 
